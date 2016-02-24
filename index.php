@@ -320,6 +320,45 @@
 		$notesql = mysqli_connect($sql_host, $sql_user, $sql_passwd, $sql_name);
 		if(!$notesql) show_error_exit('无法连接数据库');
 		mysqli_query($notesql, 'SET NAMES utf8');
+
+		if( !mysqli_query($notesql,"SELECT * FROM ".$sql_table) ){
+
+			$is_ok = mysqli_query($notesql,"CREATE TABLE ".$sql_table." (
+				num int NOT NULL AUTO_INCREMENT,
+				PRIMARY KEY(num),
+				ID tinytext,
+				passwd tinytext,
+				content longtext
+			)");
+
+			if(!$is_ok) show_error_exit("服务器端错误：无法创建数据库表,请修正数据库连接信息或使用文件存储方式");
+		}
+
+		if( !mysqli_query($notesql,"SELECT * FROM ".$sql_table_user) ){
+
+			$is_ok = mysqli_query($notesql,"CREATE TABLE ".$sql_table_user." (
+				num int NOT NULL AUTO_INCREMENT,
+				PRIMARY KEY(num),
+				username tinytext,
+				notes longtext
+			)");
+
+			if(!$is_ok) show_error_exit("服务器端错误：无法创建数据库表,请修正数据库连接信息或使用文件存储方式");
+		}
+
+		//创建伪静态
+		if( !file_exists(".htaccess") && $rewrite_create_htaccess_file ){
+			$htaccess_file_content =
+"### MarkNote RewriteRule start
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteRule ^([a-zA-Z0-9]+)$ index.php?n=$1
+RewriteRule ^([a-zA-Z0-9]+).html$ index.php?n=$1&html=yes
+</IfModule>
+### MarkNote RewriteRule end
+";
+			file_put_contents('.htaccess', $htaccess_file_content);
+		}
 	}
 
 	$noteId = @$_GET['n'];
