@@ -1,0 +1,9 @@
+<?php
+	$use_sql=true;
+	$sql_host=getenv('MYSQL_PORT_3306_TCP_ADDR');
+	$sql_user=getenv('MYSQL_USERNAME');
+	$sql_passwd=getenv('MYSQL_PASSWORD');
+	$sql_name=getenv('MYSQL_INSTANCE_NAME');
+	$sql_table="note_data";
+	$sql_table_user="note_user";
+?>
